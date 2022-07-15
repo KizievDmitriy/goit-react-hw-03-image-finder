@@ -1,41 +1,57 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import PropTypes from 'prop-types';
-import s from './Searchbar.module.css';
-import { GoSearch } from 'react-icons/go';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import styles from './Searchbar.module.css';
+import { MdSearch } from 'react-icons/md';
 
-class Searchbar extends Component {
-   state = { value: '' };
-   onFormSubmit = e => {
-      e.preventDefault();
-      this.props.onSubmit(this.state.value);
-   };
-   onChangeInput = e => {
-      const value = e.target.value;
-      this.setState({ value });
-   };
-   render() {
-      const { value } = this.state;
-      return (
-         <header className={s.Searchbar}>
-            <form className={s.SearchForm} onSubmit={this.onFormSubmit}>
-               <button type="submit" className={s.SearchFormButton}><GoSearch className={s.SearchFormSvg}/></button>
-               <label className={s.SearchFormButtonLabel}></label>
-               <input
-                  className={s.SearchFormInput}
-                  type="text"
-                  autoComplete="off"
-                  autoFocus={true}
-                  value={value}
-                  onChange={this.onChangeInput}
-                  placeholder="Search images "
-               />
-              </form>
-          </header>
-          
-      );
-   }
+
+export class Searchbar extends Component {
+  state = {
+    imgName: '',
+  };
+
+  static propTypes = {
+    onSubmit: PropTypes.func.isRequired,
+  };
+
+  handleNameChange = event => {
+    this.setState({ imgName: event.currentTarget.value });
+  };
+
+  handleSubmit = event => {
+    
+    const { imgName } = this.state;
+    const { onSubmit } = this.props;
+    event.preventDefault();
+
+    if (imgName === '') {
+      return toast.warn('Enter something, please');
+    }
+  
+    onSubmit(imgName);
+    
+  };
+
+  render() {
+    return (
+      <header className={styles.searchbar}>
+        <form onSubmit={this.handleSubmit} className={styles.form}>
+          <ToastContainer />
+          <button type="submit" className={styles.button}>
+            <MdSearch className={styles.buttonIcon} />  
+          </button>
+          <input
+            onChange={this.handleNameChange}
+            className={styles.input}
+            value={this.state.imgName}
+            type="text"
+            autoComplete="off"
+            autoFocus
+            placeholder=" Search images and photos"
+          />
+        </form>
+      </header>
+    );
+  }
 }
-Searchbar.propTypes = {
-   onSubmit: PropTypes.func.isRequired,
-};
-export default Searchbar;
